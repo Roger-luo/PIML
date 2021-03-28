@@ -7,6 +7,12 @@ using InteractiveUtils
 # ╔═╡ cc2cf6c0-8e92-11eb-1255-53074ed0e59c
 using ShortCodes
 
+# ╔═╡ 3fcaf0b4-8f47-11eb-2145-311f5d76757f
+begin
+	using .MyOtherModule: goo
+	goo
+end
+
 # ╔═╡ f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
 html"""
 <style>
@@ -175,6 +181,8 @@ you will see a webpage pops out in your browser, then you can create a new noteb
 md"""
 ## Where do I get help?
 
+- checkout the docstring!
+- read the official documentation: [https://docs.julialang.org/en/v1/](https://docs.julialang.org/en/v1/)
 - ask your TA/instructor
 
 besides above, the Julia programming language has an active community:
@@ -284,14 +292,60 @@ else
 	# do something
 end
 
+# ╔═╡ f5c8c320-8f45-11eb-37c9-9b6e20cef2fb
+md"""
+## Modules
+
+Modules is a way to define namespace. You can declare a Julia module using the `module` keyword, this is useful when you want to distinguish different project definitions etc.
+"""
+
+# ╔═╡ 0f61adba-8f46-11eb-16ff-6b4a9207f2d8
+module MyModule
+
+foo(x) = 1
+goo(x) = 2
+
+end
+
+# ╔═╡ 19c77032-8f46-11eb-0c6d-d70bf3de9e87
+module MyOtherModule
+
+foo(x) = 1
+goo(x) = 2
+
+end
+
+# ╔═╡ 2519ae78-8f46-11eb-214f-8324e9ad80c7
+MyModule.foo === MyOtherModule.foo
+
+# ╔═╡ 2e7b2654-8f46-11eb-3dfd-cb9a705f1b3c
+md"here `===` is used to check if `foo` is identical. We can overload a function in a specific module using the dot operator"
+
+# ╔═╡ 53902570-8f46-11eb-23bc-8f97b854a025
+MyModule.foo(x::Int) = 3
+
+# ╔═╡ 6a3bd774-8f46-11eb-2159-211c4128056a
+MyModule.foo
+
+# ╔═╡ 6d5a71a4-8f46-11eb-2277-15a035dcca14
+MyOtherModule.foo
+
+# ╔═╡ 216e5eda-8f47-11eb-05ea-915fa17e1f80
+md"""
+You can import the names from a module using the `using` keyword
+"""
+
+# ╔═╡ d46fa57a-8f47-11eb-2310-23a5f3ea7a8d
+md"here the dot means to import a module from local scope. In fact, Julia packages are also Julia modules, but in global scope, that's why you don't need the dot for packages"
+
 # ╔═╡ 53388a2c-8e9c-11eb-3ceb-7100da65a4a0
 md"""
 ## Matrix and Array
 Julia carries its own Array type, if you use Python, it is similar to `numpy.array` in Python except:
 
-index starts from `1`
+- index starts from `1`
 
-the multi-dimensional index is column-wise
+- the multi-dimensional index is column-wise
 
 You can also have list comprehension:
 """
@@ -322,6 +376,19 @@ if you have question about using a function, you can always type question mark `
 ```julia
 julia> ?rand
 ```
+"""
+
+# ╔═╡ 775b7928-8f46-11eb-1fd1-613158bb44c5
+md"""
+# Some useful standard libararies
+
+Since Julia is a general purposed programming language, certain functionality needs to be imported via the corresponding standard library. Here are some frequently used stdlib in numerics:
+
+- `LinearAlgebra`: provides functions like `eigen`, `qr`, `svd` etc.
+- `Statistics`: provides functions like `mean`, `var` etc.
+- `SparseArrays`: provides the sparse matrix support
+
+to find out other standard libraries, checkout the official Julia documentation
 """
 
 # ╔═╡ bc6678a0-8e9d-11eb-006b-4766c2f47db9
@@ -677,6 +744,33 @@ All Julia program **runs inside an environment**, it is the global environment b
 we will introduce this part more when we write our own automatic differentiation engine.
 """
 
+# ╔═╡ ef361372-8f44-11eb-1fc7-21656813dfe9
+md"""
+## Jupyter Notebooks
+
+Although, this course will be teached using Pluto notebooks and VS Code editor, you can also use Jupyter notebooks if you don't like Pluto notebooks.
+
+*Fun fact: the name Jupyter actually means Julia, Python and R*
+
+## Install Jupyter notebooks
+
+you can install the Julia kernel for Jupyter notebook by install the `IJulia` package in your Julia REPL
+
+```julia
+pkg> add IJulia
+```
+"""
+
+# ╔═╡ 660c5dfa-8f45-11eb-0c2b-6de98f143ebb
+md"""
+
+# Learn More about the Julia programming language
+
+- watch JuliaCon videos on YouTube: [https://www.youtube.com/channel/UC9IuUwwE2xdjQUT_LMLONoA](https://www.youtube.com/channel/UC9IuUwwE2xdjQUT_LMLONoA) or Bilibili: [https://space.bilibili.com/356692611?from=search&seid=3189679744055766688](https://space.bilibili.com/356692611?from=search&seid=3189679744055766688)
+- join JuliaCon 2021! [https://juliacon.org/2021/](https://juliacon.org/2021/)
+- check out the MIT computational thinking course: [https://computationalthinking.mit.edu/](https://computationalthinking.mit.edu/)
+"""
+
 # ╔═╡ Cell order:
 # ╠═f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
 # ╠═cc2cf6c0-8e92-11eb-1255-53074ed0e59c
@@ -725,6 +819,17 @@ we will introduce this part more when we write our own automatic differentiation
 # ╠═3c08b980-8e9c-11eb-3b35-3d8f254d4e4f
 # ╟─44cfe19e-8e9c-11eb-311b-3119586254e7
 # ╠═4b2e285a-8e9c-11eb-3fb2-23dc7a5652d8
+# ╟─f5c8c320-8f45-11eb-37c9-9b6e20cef2fb
+# ╠═0f61adba-8f46-11eb-16ff-6b4a9207f2d8
+# ╠═19c77032-8f46-11eb-0c6d-d70bf3de9e87
+# ╠═2519ae78-8f46-11eb-214f-8324e9ad80c7
+# ╟─2e7b2654-8f46-11eb-3dfd-cb9a705f1b3c
+# ╠═53902570-8f46-11eb-23bc-8f97b854a025
+# ╠═6a3bd774-8f46-11eb-2159-211c4128056a
+# ╠═6d5a71a4-8f46-11eb-2277-15a035dcca14
+# ╟─216e5eda-8f47-11eb-05ea-915fa17e1f80
+# ╠═3fcaf0b4-8f47-11eb-2145-311f5d76757f
+# ╟─d46fa57a-8f47-11eb-2310-23a5f3ea7a8d
 # ╟─53388a2c-8e9c-11eb-3ceb-7100da65a4a0
 # ╠═65cf20ae-8e9c-11eb-20f1-9dd4f08a8103
 # ╟─6aa77704-8e9c-11eb-22ac-bdbd3d23583b
@@ -732,6 +837,7 @@ we will introduce this part more when we write our own automatic differentiation
 # ╟─7722da64-8e9c-11eb-3c4d-d98f275cb706
 # ╠═8166d48c-8e9c-11eb-2032-cb423df0bd61
 # ╟─86253606-8e9c-11eb-271c-9950a3ffcd90
+# ╟─775b7928-8f46-11eb-1fd1-613158bb44c5
 # ╟─bc6678a0-8e9d-11eb-006b-4766c2f47db9
 # ╠═dec6a71c-8e9d-11eb-29a4-cdfd1c27c01b
 # ╠═e43bfe90-8e9d-11eb-3f8d-d5fd9b5d96cc
@@ -809,3 +915,5 @@ we will introduce this part more when we write our own automatic differentiation
 # ╟─9d2f7258-8e9c-11eb-23ca-cf11c2a331d8
 # ╟─e7064866-8e9c-11eb-0af6-85bdfd62fd8b
 # ╟─ec8c1dc4-8e9c-11eb-1881-7342f68b79a2
+# ╟─ef361372-8f44-11eb-1fc7-21656813dfe9
+# ╟─660c5dfa-8f45-11eb-0c2b-6de98f143ebb
