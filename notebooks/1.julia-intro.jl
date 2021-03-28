@@ -192,6 +192,21 @@ besides above, the Julia programming language has an active community:
 3. join Julia Slack chat group: [https://julialang.org/slack/](https://julialang.org/slack/)
 """
 
+# ╔═╡ d3df0b42-8fff-11eb-0fab-2bd5070ca3ff
+md"""
+# Where do I find packages?
+
+- checkout [juliahub.com](https://juliahub.com/ui/Home)
+- Google your keywords along with JuliaLang
+- search on Github
+
+# Where are the package documentations?
+
+- (again) checkout [juliahub.com](https://juliahub.com/ui/Home)
+- on the package README
+- on the package webpage
+"""
+
 # ╔═╡ 9d29f678-8e99-11eb-2fac-595bd3335f64
 md"""
 # The Julia Basics
@@ -797,6 +812,7 @@ md"""
 # ╟─6fb8a292-8e9a-11eb-3614-2bac1c3c7ebc
 # ╟─767c63dc-8e9a-11eb-299d-257d7d961df2
 # ╟─bd5bc9d6-8e98-11eb-2bb4-4bc600b4e887
+# ╟─d3df0b42-8fff-11eb-0fab-2bd5070ca3ff
 # ╟─9d29f678-8e99-11eb-2fac-595bd3335f64
 # ╟─51920c44-8e9b-11eb-2ffa-6bb90b32cb76
 # ╠═65b492d2-8e9b-11eb-1f7e-6ff3d12b2acc

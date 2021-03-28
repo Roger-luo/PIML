@@ -257,6 +257,31 @@ thus we need a specific data structure to store these values， this data struct
 Now the problem of implementing reverse mode AD becomes how to create the tape.
 """
 
+# ╔═╡ 0580566c-8ff4-11eb-35a3-bf0505fe5a1c
+md"""
+# Relation with Differential Geometry
+
+Since we have represented our AD algorithm as Jacobian or Jacobian transpose product, it is natural to have a geometric interpretation of them.
+
+## Definitions
+
+Let ``p`` be a point in the space ``\mathbf{M}`` defined by ``(x_1, x_2, ⋯, x_m)``, and we have a function ``f: \mathbf{M} → \mathbf{K}`` that is a smooth map (differentiable everywhere), then we can define the **tangent space** ``\mathbf{T}_p \mathbf{M}`` at point ``p`` as the space span by the derivatives ``\frac{d}{dx}``, the tangent space acts linearly on the space of functions. 
+
+Now we define **the collection of the tangent spaces** ``\mathbf{T}_p\mathbf{M}`` for ``p ∈ \mathbf{M}`` as the **tangent bundle** of ``\mathbf{M}``
+
+![tangent space](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Tangentialvektor.svg/200px-Tangentialvektor.svg.png)
+
+let ``df`` denotes the first order information of ``f`` at each point, which is called the **differential** of ``f``. If the derivative of ``f`` and ``g`` agree at ``p``, we say that ``df`` and ``dg`` represents the same cotangent at ``p``. The covectors ``dx_1, dx_2, ⋯, dx_m`` form the basis of the cotangent space ``\mathbf{T}^*_p \mathbf{M}`` for ``p∈\mathbf{M}``
+
+**push-forward**
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Pushforward.svg/330px-Pushforward.svg.png)
+
+**pullback**
+
+![](https://www.mathphysicsbook.com/wp-content/uploads/2013/10/39.pullback-v2.png)
+"""
+
 # ╔═╡ eb4df5e4-8f79-11eb-2429-a31bd0009c4b
 md"""
 ## the manual AD
@@ -266,44 +291,188 @@ so we can do reverse mode "automatic" differentiation manually first, to have a 
 We will use the package `ChainRules` here.
 """
 
+# ╔═╡ 72b98a42-8ff8-11eb-17f3-6d14da3964be
+x = 3.0
+
 # ╔═╡ 1a78b2be-8f7a-11eb-0470-e7febaac6272
-x, sin_pullback = rrule(sin, 1.0)
+y, sin_pullback = rrule(sin, x)
+
+# ╔═╡ 627f170a-8ff8-11eb-21eb-47796905e10b
+sin_pullback(1)
+
+# ╔═╡ 67c7f3d0-8ff8-11eb-04dc-4f796cfb940e
+cos(x)
+
+# ╔═╡ 7cffb62a-8ff8-11eb-0288-f55b0d333571
+md"""
+now we can manually generate the pullback function for a given function defined on some primal functions, in AD, we usually call these functions **adjoint**s.
+
+let's use the previous example `foo` here
+"""
+
+# ╔═╡ 98d147c4-8ff8-11eb-3ab8-21e26217e02a
+function adjoint_foo(x)
+	x1, x1_pullback = rrule(sin, x)
+	x2, x2_pullback = rrule(sin, x1)
+	y, y_pullback = rrule(cos, x2)
+	x3, x3_pullback = rrule(+, y, x2)
+	
+	return x3, function pullback(Δ)
+		_, ∂y, ∂x2_1 = x3_pullback(Δ)
+		_, ∂x2_2 = y_pullback(∂y)
+		_, ∂x1 = x2_pullback(∂x2_1 + ∂x2_2)
+		_, ∂x = x1_pullback(∂x1)
+		return Zero(), ∂x
+	end
+end
+
+# ╔═╡ 8e593406-8ff9-11eb-101a-695b2b026a20
+_, foo_pullback = adjoint_foo(x)
+
+# ╔═╡ 9e31a492-8ff9-11eb-108d-1b7bbd152170
+foo_pullback(1)
+
+# ╔═╡ a21aa0c2-8ff9-11eb-1cc8-7b63a20d0791
+(foo(x+1e-10)-foo(x-1e-10))/2e-10
+
+# ╔═╡ c5f14d48-8ff9-11eb-1350-790162aa8b34
+md"""
+thus the simplest reverse mode AD is about how to create this tiny `pullback` function automatically, and to know how to create this `pullback` function we need to know what primal functions are called by the given function, so that we can simply reverse the order of calls and replace them with the `pullback` functions.
+"""
 
 # ╔═╡ 3fc036f8-8eac-11eb-15dc-017c0d5237bc
 md"""
 ## Operator Overloading AD
 
 The easiest way of creating a tape is using operator overloading. By operator overloading, it means the exactly same way we implemented our toy symbolic program in the previous section.
+
+for example, we can define our own type to dispatch the functions to a `track` function so that we can store the function call into a tape.
+
+```julia
+mutable struct Variable{T} <: ADExpr
+    value::T
+    grad::T
+
+    Variable(val::T) where T = new{T}(val)
+    Variable(val::T, grad::T) where T = new{T}(val)
+end
+
+struct Node{FT <: Function, ArgsT <: Tuple, KwargsT <: NamedTuple} <: ADExpr
+    f::FT
+    args::ArgsT
+    kwargs::KwargsT
+end
+```
+
+then overload some primal functions to track the call into tape
+
+```
+Base.sin(x::ADExpr) = register(Base.sin, x)
+```
 """
+
+# ╔═╡ 35cfef70-8ffa-11eb-1a48-e906596eebe6
+md"""
+I will not demonstrate the details of implementing such AD engine, but once you understand the mechanism, you should be able to write one yourself in mins!
+
+For the curious, checkout my blog post **Implementing Your Own Automatic Differentiation Engine in ONE day**: [https://blog.rogerluo.me/2018/10/23/write-an-ad-in-one-day/](https://blog.rogerluo.me/2018/10/23/write-an-ad-in-one-day/)
+"""
+
+# ╔═╡ 73ffb3fe-8ffd-11eb-2b71-038543ea5093
+md"""
+
+## What packages/software uses this method?
+
+#### Python
+
+- PyTorch
+- autograd
+- ...
+
+#### Julia
+
+- Tracker
+- YAAD
+- Nabla
+- ...
+
+"""
+
 
 # ╔═╡ bd69872c-8f78-11eb-2197-2f760c33b197
 md"""
-however, the above method won't work for general programs that contains control flows. This is because in the representation of Wengert list, we don't have the semantic of control flows, such as `for` loop or `if else` statements
+
+## Limitations
+
+however, the above method **won't work for general programs that contains control flows**. This is because in the representation of Wengert list, or the tape, we don't have the semantic of control flows, and we don't have a way to record control flows using operator overloading, such as `for` loop or `if else` statements.
+
+This is because control flows are not functions in most of the programming languages, we cannot change the control flow behaviour by overloading them on different types, and it may not make sense to do so.
+
+On the other hand, it **won't work for generic programming**, since we have used a specific type to dispatch functions, which kinda "abused" the type system.
 """
 
 # ╔═╡ 46ad0fa2-8eac-11eb-28df-4f2c23f8d3ff
 md"""
 ## Source Code Transformation AD
+
+As you may noticed, in both forward and reverse mode AD, in order to represent intermediate derivatives, we were forced to use a new temperory variable for every function call.
+
+This leads to a special intermediate representation for general programs called the **Static Single Assignment** intermediate representation (SSA IR), by **Static Single Assignment** we mean:
+
+> every variable in the program is only assigned once statically
+
+the control flows in a SSA IR are usually canonicalized to `goto` or `goto ifnot` if it has conditions, since every variable is only assigned once we use `%<name>` or `%<int>` to represent a variable.
 """
 
-# ╔═╡ 6cf358d8-8eac-11eb-34ef-43bd6b60c4d5
+# ╔═╡ cbe1949e-8ffc-11eb-0747-e576545133b4
 md"""
-## Machine Learning System/Framework
+the SSA IR is a widely used representation in your daily used compilers, for example, your C/C++ compiler clang, or some of your new fancy langauges like Julia, rust and more. This is because SSA IR is a very convenient representation to optimize and analysis.
+
+![](https://slideplayer.com/slide/13900843/85/images/7/C-like+IR+In+SSA+form+x1+%3D+f%28x0%29%3B+x+%3D+f%28x%29%3B+if+%28x1+%3E+y0%29.jpg)
+"""
+
+# ╔═╡ 6616ee24-8ffd-11eb-0d13-7f7ea01d3f73
+md"""
+this is a natural extension of the Wengert list (the tape) with control flows. Thus instead of doing operator overloading, we can directly write a compiler extension to transform the source encoded in SSA IR to the corresponding differential function in SSA IR.
+
+And in Julia, this is extremely easy (in terms of implementing it), because Julia is a dynamic compiled language
+
+![](https://blog.rogerluo.me/images/julia-compile-diagram.png)
+"""
+
+# ╔═╡ c5f18fe2-8ffe-11eb-0a96-1f3ce397e943
+md"""
+# Software/Package uses this method
+
+- **Julia**: Zygote, Enzyme, Yota, Diffractor (work-in-progress), ...
+- **Python**: JAX, ...
+"""
+
+# ╔═╡ 420d72f4-8ffe-11eb-1b0f-43bdc9edf955
+md"""
+## Limitations
+
+No limitations in theory.
+
+We have the information about control flows, which means it **will work for control flows**.
+
+We don't need to reply on type system to track the function calls anymore which means it works for **generic programming**
+
+But covering the entire general purpose programming language with most of the corner cases may take years to accomplish.
 """
 
 # ╔═╡ 84e5fe6e-8eac-11eb-04f8-cf7499b2c218
 md"""
 ## Other type of AD engines
+
+There are other type of AD engines that works under some context, such as polynomials, reversible programs, etc.
+
+You can find a full list of AD engines in Julia at [https://juliadiff.org/](https://juliadiff.org/)
 """
 
 # ╔═╡ 4c23d3bc-8eac-11eb-2870-a37dfc123bc5
 md"""
-## Differentiable Programming
-"""
-
-# ╔═╡ 5c03472c-8eac-11eb-0072-b50fe89704fc
-md"""
-## Implement Your own AD engine in ONE day
+## Differentiable Programming: a case study
 """
 
 # ╔═╡ Cell order:
@@ -339,13 +508,27 @@ md"""
 # ╟─10ba0d9c-8f5f-11eb-0744-6be46cfacebe
 # ╟─4921f4f8-8f60-11eb-0e45-3f3034dbea83
 # ╟─29fa38b6-8f61-11eb-118a-616fc647715a
+# ╟─0580566c-8ff4-11eb-35a3-bf0505fe5a1c
 # ╟─eb4df5e4-8f79-11eb-2429-a31bd0009c4b
 # ╠═166bbbb2-8f7a-11eb-19c6-19dfe8ee5123
+# ╠═72b98a42-8ff8-11eb-17f3-6d14da3964be
 # ╠═1a78b2be-8f7a-11eb-0470-e7febaac6272
+# ╠═627f170a-8ff8-11eb-21eb-47796905e10b
+# ╠═67c7f3d0-8ff8-11eb-04dc-4f796cfb940e
+# ╟─7cffb62a-8ff8-11eb-0288-f55b0d333571
+# ╠═98d147c4-8ff8-11eb-3ab8-21e26217e02a
+# ╠═8e593406-8ff9-11eb-101a-695b2b026a20
+# ╠═9e31a492-8ff9-11eb-108d-1b7bbd152170
+# ╠═a21aa0c2-8ff9-11eb-1cc8-7b63a20d0791
+# ╟─c5f14d48-8ff9-11eb-1350-790162aa8b34
 # ╟─3fc036f8-8eac-11eb-15dc-017c0d5237bc
+# ╟─35cfef70-8ffa-11eb-1a48-e906596eebe6
+# ╟─73ffb3fe-8ffd-11eb-2b71-038543ea5093
 # ╟─bd69872c-8f78-11eb-2197-2f760c33b197
-# ╠═46ad0fa2-8eac-11eb-28df-4f2c23f8d3ff
-# ╠═6cf358d8-8eac-11eb-34ef-43bd6b60c4d5
-# ╠═84e5fe6e-8eac-11eb-04f8-cf7499b2c218
+# ╟─46ad0fa2-8eac-11eb-28df-4f2c23f8d3ff
+# ╟─cbe1949e-8ffc-11eb-0747-e576545133b4
+# ╟─6616ee24-8ffd-11eb-0d13-7f7ea01d3f73
+# ╟─c5f18fe2-8ffe-11eb-0a96-1f3ce397e943
+# ╟─420d72f4-8ffe-11eb-1b0f-43bdc9edf955
+# ╟─84e5fe6e-8eac-11eb-04f8-cf7499b2c218
 # ╠═4c23d3bc-8eac-11eb-2870-a37dfc123bc5
-# ╠═5c03472c-8eac-11eb-0072-b50fe89704fc
