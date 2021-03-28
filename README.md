@@ -6,4 +6,14 @@
 [![Coverage](https://codecov.io/gh/Roger-luo/PIML.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/Roger-luo/PIML.jl) -->
 
 Lecture materials of the Machine Learning for Physics course in Perimeter Institute 2021.
-Please refer to the [website page](#page) for further instructions.
+
+## How to Use
+
+1. Install [Pluto notebook](https://github.com/fonsp/Pluto.jl)
+2. download this repository by click the green button in this page.
+3. run `Pluto.run()` in your Julia REPL
+4. open the notebooks in `notebooks` folder
+
+## License
+
+MIT License
