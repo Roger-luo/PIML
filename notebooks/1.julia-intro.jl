@@ -774,6 +774,16 @@ you can install the Julia kernel for Jupyter notebook by install the `IJulia` pa
 ```julia
 pkg> add IJulia
 ```
+
+and then you can either start your jupyter notebook using
+
+```julia
+julia> using IJulia
+
+julia> notebook()
+```
+
+or from command line as you do for python, and choose the kernel to be Julia.
 """
 
 # ╔═╡ 660c5dfa-8f45-11eb-0c2b-6de98f143ebb
