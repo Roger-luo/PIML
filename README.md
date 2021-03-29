@@ -11,8 +11,22 @@ Lecture materials of the Machine Learning for Physics course in Perimeter Instit
 
 1. Install [Pluto notebook](https://github.com/fonsp/Pluto.jl)
 2. download this repository by click the green button in this page.
-3. run `Pluto.run()` in your Julia REPL
-4. open the notebooks in `notebooks` folder
+3. open your Julia REPL and type
+
+```julia
+cd("path/to/your/PIML/folder")
+```
+
+4. press `]` button to enter the pkg mode, and type the following to install all the packages needed
+
+```julia
+activate .
+instantiate
+```
+
+5. press `backspace` button to exit pkg mode
+6. run `Pluto.run()` in your Julia REPL
+7. open the notebooks in `notebooks` folder
 
 ## License
 
