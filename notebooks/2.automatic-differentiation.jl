@@ -472,8 +472,21 @@ You can find a full list of AD engines in Julia at [https://juliadiff.org/](http
 
 # ╔═╡ 4c23d3bc-8eac-11eb-2870-a37dfc123bc5
 md"""
-## Differentiable Programming: a case study
+## Differentiable Programming in Condensed Matter Physics: Tensor Network
+
+One of the most poplular method in numerical condensed matter physics is the tensor network methods.
+
+Tensor network is also way to approximate the solution, in previous lectures, you have learned how to use neural network states to solve ground state problem using variational Monte Carlo. 
+
+More traditionally physicists have been using tensor network as the physical ansatz. However calculating the gradient of tensor networks can be complicated. Thus, by making use of automatic differentiation, one will be able to do gradient based optimization on tensor network easily.
+
+![](../assets/tensor-network.png)
+
+[https://arxiv.org/pdf/1903.09650.pdf](https://arxiv.org/pdf/1903.09650.pdf)
 """
+
+# ╔═╡ 1ba1fde4-90d3-11eb-2d2a-5f3028b94d64
+pwd()
 
 # ╔═╡ Cell order:
 # ╟─a8439cf0-8eab-11eb-3d6b-a3d65e46a635
@@ -532,3 +545,4 @@ md"""
 # ╟─420d72f4-8ffe-11eb-1b0f-43bdc9edf955
 # ╟─84e5fe6e-8eac-11eb-04f8-cf7499b2c218
 # ╠═4c23d3bc-8eac-11eb-2870-a37dfc123bc5
+# ╠═1ba1fde4-90d3-11eb-2d2a-5f3028b94d64
