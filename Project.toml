@@ -1,8 +1,3 @@
-name = "PIML"
-uuid = "cacf2c3d-cb98-4ab1-ab8b-159ca4a7a622"
-authors = ["Roger-Luo <rogerluo.rl18@gmail.com> and contributors"]
-version = "0.1.0"
-
 [deps]
 ChainRules = "082447d4-558c-5d27-93f4-14fc19e9eca2"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
