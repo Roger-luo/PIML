@@ -783,7 +783,23 @@ begin
 end
 
 # ╔═╡ e8187180-90df-11eb-043e-5b7847cc69fe
-md"for a more complete definition of tropical numbers in Julia that handles corner cases, please refer to: [https://github.com/TensorBFS/TropicalNumbers.jl](https://github.com/TensorBFS/TropicalNumbers.jl)"
+md"""
+for a more complete definition of tropical numbers in Julia that handles corner cases, please refer to: [https://github.com/TensorBFS/TropicalNumbers.jl](https://github.com/TensorBFS/TropicalNumbers.jl)
+"""
+
+# ╔═╡ 30e07b24-90e0-11eb-249c-63f6d375cb86
+A = Tropical.(rand(2, 2))
+
+# ╔═╡ 406f2162-90e0-11eb-1d20-4936fcecad7a
+A * A
+
+# ╔═╡ 47d48e06-90e0-11eb-141c-b112c58c18db
+md"""
+
+### Question: How to do it in Python?
+
+If you can't, why?
+"""
 
 # ╔═╡ 7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
 md"""
@@ -1019,6 +1035,9 @@ md"""
 # ╟─bc905b2c-90df-11eb-20cd-1395db871a99
 # ╠═b771d9ea-90df-11eb-3e55-a9ecbd119cc7
 # ╟─e8187180-90df-11eb-043e-5b7847cc69fe
+# ╠═30e07b24-90e0-11eb-249c-63f6d375cb86
+# ╠═406f2162-90e0-11eb-1d20-4936fcecad7a
+# ╟─47d48e06-90e0-11eb-141c-b112c58c18db
 # ╟─7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
 # ╟─9d2f7258-8e9c-11eb-23ca-cf11c2a331d8
 # ╟─e7064866-8e9c-11eb-0af6-85bdfd62fd8b
