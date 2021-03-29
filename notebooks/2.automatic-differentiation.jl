@@ -470,6 +470,24 @@ There are other type of AD engines that works under some context, such as polyno
 You can find a full list of AD engines in Julia at [https://juliadiff.org/](https://juliadiff.org/)
 """
 
+# ╔═╡ 2e3fc494-90de-11eb-1c90-f9cc1357aab3
+md"""
+
+### Is there an algebra gives us reverse mode AD?
+
+- reversible programming
+
+![](https://giggleliu.github.io/NiLang.jl/dev/asset/revcomp.jpg)
+
+"""
+
+# ╔═╡ 8d13dbe0-90de-11eb-1bcf-dfbd8118e59d
+md"""
+## NiLang: reversible domain-specific programming language in Julia
+
+![](https://github.com/GiggleLiu/NiLang.jl/raw/master/docs/src/asset/logo3.png)
+"""
+
 # ╔═╡ 4c23d3bc-8eac-11eb-2870-a37dfc123bc5
 md"""
 ## Differentiable Programming in Condensed Matter Physics: Tensor Network
@@ -550,5 +568,7 @@ md"""
 # ╟─c5f18fe2-8ffe-11eb-0a96-1f3ce397e943
 # ╟─420d72f4-8ffe-11eb-1b0f-43bdc9edf955
 # ╟─84e5fe6e-8eac-11eb-04f8-cf7499b2c218
+# ╟─2e3fc494-90de-11eb-1c90-f9cc1357aab3
+# ╟─8d13dbe0-90de-11eb-1bcf-dfbd8118e59d
 # ╟─4c23d3bc-8eac-11eb-2870-a37dfc123bc5
 # ╟─619d6b8e-90d4-11eb-17fa-dd41790aa420

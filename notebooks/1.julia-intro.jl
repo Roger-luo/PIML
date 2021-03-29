@@ -75,11 +75,31 @@ md"""
 - ...
 """
 
+# ╔═╡ c763fe62-90d7-11eb-2483-31a70c8487cc
+md"""
+## The two language problem
+
+In traditional software development, one usually uses a static compiled language along with an interpreted language
+to get both efficiency and flexibility, e.g most of the python projects uses C++ and Python.
+
+However, using two languages creates a lot of problems:
+
+1. the project will be more complicated: now you need to learn two languages to develop it
+2. the project will be less generic than one language: how these two languages communicate is via C ABI, which has no generic type information (we will learn what is this later)
+3. when someone write a prototype using the interpreted language, it can be a lot extra work to convert it to the static compiled language for efficiency.
+"""
+
 # ╔═╡ 232da2be-8e91-11eb-3289-0d9bf19a225e
 md"""
 ## Just-in-time compilation: compile right before you run it!
 
+One solution to accelerate interpreted language is via just-in-time compilation.
+
 *some runtime values become compile time*
+
+![](https://source.android.com/devices/tech/dalvik/images/jit-profile-comp.png)
+
+However, a language designed for interpreter is usually hard to accelerate and compile in general.
 """
 
 # ╔═╡ e17692c6-8e91-11eb-3573-c98d429a5403
@@ -96,6 +116,8 @@ Numerical Computing (DOI:10.1137/141000671)](https://julialang.org/assets/resear
 md"""
 
 ## Julia: A Differentiable Programmable Language
+
+*Julia is currently the only option for whole language differentibility with rich numerical ecosystem*
 
 [The Software 2.0](https://karpathy.medium.com/software-2-0-a64152b37c35) - Andrej Karpathy
 """
@@ -723,6 +745,20 @@ in some places, you may heard people call this tree structure as abstract/concre
 using this.
 """
 
+# ╔═╡ 7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
+md"""
+## Write efficient Julia code
+
+When you start caring about the efficiency, despite of algorithmic improvement and hardware improvement. There is a key concept in Julia
+that you may frequently see.
+
+In traditional software development, there is a separation between static compiled part and dynamic part by using two languages.
+In julia the boundary of static compiled and dynamic interpreted is the **type stability**
+
+In static compiled language, such as C++ (version later than C++11), one often needs to ensure the types can be correctly inferred.
+This is true in Julia when you wish to check this, but the program will still work if the compiler fail to infer the type.
+"""
+
 # ╔═╡ 9d2f7258-8e9c-11eb-23ca-cf11c2a331d8
 md"""
 ## Package management
@@ -797,14 +833,15 @@ md"""
 """
 
 # ╔═╡ Cell order:
-# ╠═f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
-# ╠═cc2cf6c0-8e92-11eb-1255-53074ed0e59c
+# ╟─f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
+# ╟─cc2cf6c0-8e92-11eb-1255-53074ed0e59c
 # ╟─7400844c-8e8f-11eb-27d0-859ea6dba632
 # ╟─de79e82c-8e8f-11eb-0513-c7df38cb3d30
 # ╟─03a8af1e-8e90-11eb-2d94-e52e8c2be959
 # ╟─61a2883a-8e90-11eb-26bb-49925c4ad4e9
 # ╟─b039ac32-8e90-11eb-08ec-8710712591f7
 # ╟─d9287bda-8e90-11eb-1c46-af0555ed5158
+# ╟─c763fe62-90d7-11eb-2483-31a70c8487cc
 # ╟─232da2be-8e91-11eb-3289-0d9bf19a225e
 # ╟─e17692c6-8e91-11eb-3573-c98d429a5403
 # ╟─363accfa-8e92-11eb-1a5b-6fac3df0290c
@@ -938,6 +975,7 @@ md"""
 # ╠═49b9d1a6-8ea9-11eb-2231-73d83734b41f
 # ╠═7281760c-8ea9-11eb-05b5-7d65a60c601d
 # ╟─e5eb3738-8eaa-11eb-18f3-314a142a7429
+# ╟─7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
 # ╟─9d2f7258-8e9c-11eb-23ca-cf11c2a331d8
 # ╟─e7064866-8e9c-11eb-0af6-85bdfd62fd8b
 # ╟─ec8c1dc4-8e9c-11eb-1881-7342f68b79a2
