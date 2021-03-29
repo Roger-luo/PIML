@@ -415,6 +415,28 @@ julia> ?rand
 ```
 """
 
+# ╔═╡ 7c354c6c-90e0-11eb-1125-d13c2252863c
+md"""
+## Broadcast
+
+Sometimes, we want to apply a function element-wise to a matrix, in Julia you can do it on ANY function you defined using the broadcast syntax
+"""
+
+# ╔═╡ 96065b90-90e0-11eb-1041-e7654ab0b592
+B = rand(5, 5)
+
+# ╔═╡ 9c66f4f4-90e0-11eb-3512-e9b6e9bd838f
+sin.(B)
+
+# ╔═╡ a4433278-90e0-11eb-3cb7-9b8fcbac8b36
+cos.(B)
+
+# ╔═╡ b7c10a02-90e0-11eb-2098-9f26461cd856
+md"works for multi-arg function too"
+
+# ╔═╡ ade6e702-90e0-11eb-1b49-e7deedaafe70
+B .* B
+
 # ╔═╡ 775b7928-8f46-11eb-1fd1-613158bb44c5
 md"""
 # Some useful standard libararies
@@ -956,6 +978,12 @@ md"""
 # ╟─7722da64-8e9c-11eb-3c4d-d98f275cb706
 # ╠═8166d48c-8e9c-11eb-2032-cb423df0bd61
 # ╟─86253606-8e9c-11eb-271c-9950a3ffcd90
+# ╟─7c354c6c-90e0-11eb-1125-d13c2252863c
+# ╠═96065b90-90e0-11eb-1041-e7654ab0b592
+# ╠═9c66f4f4-90e0-11eb-3512-e9b6e9bd838f
+# ╠═a4433278-90e0-11eb-3cb7-9b8fcbac8b36
+# ╟─b7c10a02-90e0-11eb-2098-9f26461cd856
+# ╠═ade6e702-90e0-11eb-1b49-e7deedaafe70
 # ╟─775b7928-8f46-11eb-1fd1-613158bb44c5
 # ╟─bc6678a0-8e9d-11eb-006b-4766c2f47db9
 # ╠═dec6a71c-8e9d-11eb-29a4-cdfd1c27c01b
