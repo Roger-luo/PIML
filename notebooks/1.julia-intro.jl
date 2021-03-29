@@ -745,6 +745,46 @@ in some places, you may heard people call this tree structure as abstract/concre
 using this.
 """
 
+# ╔═╡ 994d5a18-90df-11eb-0cbc-6df0aebb7e0a
+md"""
+
+## Generic Programming in Physics
+
+![](https://github.com/Roger-luo/PIML/blob/master/notebooks/assets/tropical.png?raw=true)
+"""
+
+# ╔═╡ bc905b2c-90df-11eb-20cd-1395db871a99
+md"""
+## Implementing Tropical Numbers in Julia
+
+you can define a tropical number in a few lines in Julia and use it with other packages (that makes sense mathematically)
+"""
+
+# ╔═╡ b771d9ea-90df-11eb-3e55-a9ecbd119cc7
+begin
+	struct Tropical{T} <: Number
+	    n::T
+	    Tropical{T}(x) where T = new{T}(T(x))
+	    function Tropical(x::T) where T
+	        new{T}(x)
+	    end
+	    function Tropical{T}(x::Tropical{T}) where T
+	        x
+	    end
+	    function Tropical{T1}(x::Tropical{T2}) where {T1,T2}
+	        new{T1}(T2(x.n))
+	    end
+	end
+	
+	Base.show(io::IO, t::Tropical) = Base.print(io, "$(t.n)ₜ")
+	
+	Base.:*(a::Tropical, b::Tropical) = Tropical(a.n + b.n)
+	Base.:+(a::Tropical, b::Tropical) = Tropical(max(a.n, b.n))
+end
+
+# ╔═╡ e8187180-90df-11eb-043e-5b7847cc69fe
+md"for a more complete definition of tropical numbers in Julia that handles corner cases, please refer to: [https://github.com/TensorBFS/TropicalNumbers.jl](https://github.com/TensorBFS/TropicalNumbers.jl)"
+
 # ╔═╡ 7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
 md"""
 ## Write efficient Julia code
@@ -975,6 +1015,10 @@ md"""
 # ╠═49b9d1a6-8ea9-11eb-2231-73d83734b41f
 # ╠═7281760c-8ea9-11eb-05b5-7d65a60c601d
 # ╟─e5eb3738-8eaa-11eb-18f3-314a142a7429
+# ╟─994d5a18-90df-11eb-0cbc-6df0aebb7e0a
+# ╟─bc905b2c-90df-11eb-20cd-1395db871a99
+# ╠═b771d9ea-90df-11eb-3e55-a9ecbd119cc7
+# ╟─e8187180-90df-11eb-043e-5b7847cc69fe
 # ╟─7aa0e478-90d7-11eb-1fc7-ddfc1c7d9284
 # ╟─9d2f7258-8e9c-11eb-23ca-cf11c2a331d8
 # ╟─e7064866-8e9c-11eb-0af6-85bdfd62fd8b
