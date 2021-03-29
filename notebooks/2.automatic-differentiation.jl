@@ -440,6 +440,11 @@ And in Julia, this is extremely easy (in terms of implementing it), because Juli
 ![](https://blog.rogerluo.me/images/julia-compile-diagram.png)
 """
 
+# ╔═╡ df1d9e58-90de-11eb-341a-bb942e20e713
+md"""
+For the curious, checkout my blog post **Build your own source to source automatic differentiation in ONE day!** :[https://blog.rogerluo.me/2019/07/27/yassad/](https://blog.rogerluo.me/2019/07/27/yassad/)
+"""
+
 # ╔═╡ c5f18fe2-8ffe-11eb-0a96-1f3ce397e943
 md"""
 # Software/Package uses this method
@@ -565,6 +570,7 @@ md"""
 # ╟─46ad0fa2-8eac-11eb-28df-4f2c23f8d3ff
 # ╟─cbe1949e-8ffc-11eb-0747-e576545133b4
 # ╟─6616ee24-8ffd-11eb-0d13-7f7ea01d3f73
+# ╟─df1d9e58-90de-11eb-341a-bb942e20e713
 # ╟─c5f18fe2-8ffe-11eb-0a96-1f3ce397e943
 # ╟─420d72f4-8ffe-11eb-1b0f-43bdc9edf955
 # ╟─84e5fe6e-8eac-11eb-04f8-cf7499b2c218
