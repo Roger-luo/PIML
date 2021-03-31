@@ -4,8 +4,20 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : missing
+        el
+    end
+end
+
 # ╔═╡ 1c3ff5c4-90d5-11eb-1459-7d7d43335a80
-using Yao, YaoPlots, YaoExtensions
+using Yao, YaoPlots, YaoExtensions, PlutoUI, Flux, Plots
+
+# ╔═╡ e9342104-91cf-11eb-01d7-ffd747975c7c
+using LinearAlgebra
 
 # ╔═╡ aa09eef8-8eac-11eb-00e6-6794d5c9e0b5
 md"""
@@ -31,7 +43,7 @@ A quantum gate is a unitary operator that can be applied on the (quantum) regist
 """
 
 # ╔═╡ 920da102-90d5-11eb-0437-495807d8b345
-plot(X)
+YaoPlots.plot(X)
 
 # ╔═╡ a5d5d56a-90d5-11eb-1e4a-8bf893d8534a
 md"""
@@ -41,7 +53,7 @@ There are some quantum gates that can take classical parameters, e.g the rotatio
 """
 
 # ╔═╡ be1f51c6-90d5-11eb-3db1-99708f112467
-plot(Rx(0.1))
+YaoPlots.plot(Rx(0.1))
 
 # ╔═╡ 4f4a700e-90d6-11eb-3058-b1809082853a
 md"""
@@ -51,13 +63,13 @@ The gate operation can be controlled by another qubits, we usually represent the
 """
 
 # ╔═╡ 6b2079e2-90d6-11eb-330c-0194f2906114
-plot(control(2, 1, 2=>Rx(0.1)))
+YaoPlots.plot(control(2, 1, 2=>Rx(0.1)))
 
 # ╔═╡ 7854398c-90d6-11eb-2aad-b75727ab7b79
 md"for controlled Pauli X gate, we also call it the CNOT gate, it can be plotted in a simpler way"
 
 # ╔═╡ 9003bb5c-90d6-11eb-102e-f1954fe71ec6
-plot(cnot(2, 1, 2))
+YaoPlots.plot(cnot(2, 1, 2))
 
 # ╔═╡ debe78d2-90d5-11eb-1526-87f514b030bf
 md"""
@@ -73,7 +85,7 @@ begin
 	A(i, j) = control(i, j=>shift(2π/(1<<(i-j+1))))
 	B(n, k) = chain(n, j==k ? put(k=>H) : A(j, k) for j in k:n)
 	qft(n) = chain(B(n, k) for k in 1:n)
-	plot(qft(3))
+	YaoPlots.plot(qft(3))
 end
 
 # ╔═╡ e4f1f268-91ca-11eb-231a-712cb8cf4a55
@@ -93,7 +105,12 @@ md"""
 ### the quantum blocks
 
 Yao represents the quantum circuits as blocks
+
+![](https://github.com/Roger-luo/PIML/blob/master/notebooks/assets/qblock.png?raw=true)
 """
+
+# ╔═╡ 76b6bf64-91cb-11eb-3c39-576a66e70cf4
+qft(3)
 
 # ╔═╡ c75b0244-8eac-11eb-2528-b9f59f61634d
 md"""
@@ -168,7 +185,7 @@ You have learned how variational Monte Carlo works, now let's:
 md"first let's create a variational circuit using the `variational_circuit` function"
 
 # ╔═╡ 4422a0fa-91ca-11eb-3bda-f37b2dab68b3
-plot(variational_circuit(5, 3))
+YaoPlots.plot(variational_circuit(5, 3))
 
 # ╔═╡ 82f2d962-91ca-11eb-2e66-597a90047e87
 md"then create a quantum register at state ``|00⋯00⟩``"
@@ -194,9 +211,54 @@ we can now create a 1-D heisenberg hamiltonian
 # ╔═╡ da9ba108-91ca-11eb-28a4-755cf76ea605
 h = heisenberg(5)
 
+# ╔═╡ b3cc56a2-91cb-11eb-3736-87df27d04545
+md"we can calculate the expectation value of this hamiltonian"
+
+# ╔═╡ 848d146c-91cb-11eb-17cc-87a1aa3c0d76
+expect(heisenberg(5), r)
+
+# ╔═╡ bd3c4bca-91cb-11eb-29cf-657eb95db73d
+@doc expect
+
+# ╔═╡ 9fe3db9c-91cb-11eb-1888-cf7dd2aa3aa1
+expect(heisenberg(5), r=>variational_circuit(5, 3))
+
+# ╔═╡ a6c13932-91cb-11eb-3822-7da569e520e0
+reg, ∇θ = expect'(heisenberg(5), zero_state(5)=>variational_circuit(5, 3))
+
+# ╔═╡ cbacc1f8-91cb-11eb-316c-37e3da59855c
+md"we can use the optimizers from the ML framework `Flux`"
+
+# ╔═╡ dddcbf20-91cd-11eb-2d73-2daa1643074d
+opt = ADAM()
+
+# ╔═╡ 18d83a62-91d0-11eb-2d8d-2bc2e69785e8
+md"depth=$(@bind depth Slider(1:10; show_value=true))"
+
+# ╔═╡ 12aff314-91ce-11eb-36d3-772d32cb8f3e
+circuit = variational_circuit(5, depth)
+
+# ╔═╡ e172b6f0-91cd-11eb-35be-2d44f6f26a80
+begin
+	history = []
+	θ = rand(nparameters(circuit))
+	for _ in 1:1000
+		reg, ∇θ = expect'(heisenberg(5), zero_state(5)=>dispatch!(circuit, θ))
+		Flux.Optimise.update!(opt, θ, ∇θ)
+		current = expect(heisenberg(5), zero_state(5)=>dispatch!(circuit, θ))
+		push!(history, real(current))
+	end
+	Plots.plot(history)
+end
+
+# ╔═╡ ec0935e0-91cf-11eb-1837-334e0e92edee
+minimum(eigvals(Matrix(heisenberg(5))))
+
 # ╔═╡ ad0071da-8ead-11eb-31e8-b94b8bff7635
 md"""
 ## Placement Ads: Google Summer of Code 2022
+
+https://summerofcode.withgoogle.com/
 """
 
 # ╔═╡ Cell order:
@@ -214,7 +276,8 @@ md"""
 # ╟─0a379552-90d6-11eb-1a07-130ebf3c1264
 # ╟─e4f1f268-91ca-11eb-231a-712cb8cf4a55
 # ╟─0478efb2-91cb-11eb-034e-0b0c3be90bb7
-# ╠═2a546ef0-91cb-11eb-17fd-4b8c74878e6a
+# ╟─2a546ef0-91cb-11eb-17fd-4b8c74878e6a
+# ╠═76b6bf64-91cb-11eb-3c39-576a66e70cf4
 # ╟─c75b0244-8eac-11eb-2528-b9f59f61634d
 # ╟─e1345ee8-8eac-11eb-3c22-0db185142833
 # ╟─f8270b02-8eac-11eb-2ab3-3323e01f4f62
@@ -227,4 +290,16 @@ md"""
 # ╠═a0527026-91ca-11eb-0604-21a298350c8d
 # ╟─b8a71bf4-91ca-11eb-2f81-eb67cfeeada0
 # ╠═da9ba108-91ca-11eb-28a4-755cf76ea605
-# ╠═ad0071da-8ead-11eb-31e8-b94b8bff7635
+# ╟─b3cc56a2-91cb-11eb-3736-87df27d04545
+# ╠═848d146c-91cb-11eb-17cc-87a1aa3c0d76
+# ╠═bd3c4bca-91cb-11eb-29cf-657eb95db73d
+# ╠═9fe3db9c-91cb-11eb-1888-cf7dd2aa3aa1
+# ╠═a6c13932-91cb-11eb-3822-7da569e520e0
+# ╟─cbacc1f8-91cb-11eb-316c-37e3da59855c
+# ╠═dddcbf20-91cd-11eb-2d73-2daa1643074d
+# ╠═18d83a62-91d0-11eb-2d8d-2bc2e69785e8
+# ╠═12aff314-91ce-11eb-36d3-772d32cb8f3e
+# ╠═e172b6f0-91cd-11eb-35be-2d44f6f26a80
+# ╠═e9342104-91cf-11eb-01d7-ffd747975c7c
+# ╠═ec0935e0-91cf-11eb-1837-334e0e92edee
+# ╟─ad0071da-8ead-11eb-31e8-b94b8bff7635
