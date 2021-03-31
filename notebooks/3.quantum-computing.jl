@@ -170,6 +170,13 @@ md"""
 is it possible to differentiate quantum circuits using reverse mode?
 """
 
+# ╔═╡ c97fffa8-91d0-11eb-0a0c-092545e368f8
+md"""
+Only for simulation
+
+![](https://github.com/Roger-luo/PIML/blob/master/notebooks/assets/yao-reverse-ad.png?raw=true)
+"""
+
 # ╔═╡ 3c919a50-8ead-11eb-058f-27eceb1deeaa
 md"""
 ## Implementing A Simple Variational Quantum Eigensolver (VQE)
@@ -281,6 +288,7 @@ https://summerofcode.withgoogle.com/
 # ╟─c75b0244-8eac-11eb-2528-b9f59f61634d
 # ╟─e1345ee8-8eac-11eb-3c22-0db185142833
 # ╟─f8270b02-8eac-11eb-2ab3-3323e01f4f62
+# ╟─c97fffa8-91d0-11eb-0a0c-092545e368f8
 # ╟─3c919a50-8ead-11eb-058f-27eceb1deeaa
 # ╟─68e75bba-91ca-11eb-128f-1d6b0b7cbb78
 # ╠═4422a0fa-91ca-11eb-3bda-f37b2dab68b3
