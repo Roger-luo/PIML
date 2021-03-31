@@ -16,9 +16,6 @@ end
 # ╔═╡ f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
 html"""
 <style>
-main {
-    max-width: 1900px;
-}
 .julia-container {
    max-width: 1900px;
    max-height: 400px;
@@ -911,7 +908,7 @@ md"""
 """
 
 # ╔═╡ Cell order:
-# ╟─f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
+# ╠═f1aa59ae-8e94-11eb-12bc-3b1d9ccc314b
 # ╟─cc2cf6c0-8e92-11eb-1255-53074ed0e59c
 # ╟─7400844c-8e8f-11eb-27d0-859ea6dba632
 # ╟─de79e82c-8e8f-11eb-0513-c7df38cb3d30
